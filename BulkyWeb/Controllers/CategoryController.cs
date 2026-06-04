@@ -1,6 +1,7 @@
 ﻿using Bulky.Domain;
 using BulkyWeb.Data;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.Remoting;
 
 namespace BulkyWeb.Controllers
 {
@@ -54,6 +55,31 @@ namespace BulkyWeb.Controllers
                 return RedirectToAction("Index");
             }
             return View();
+        }
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            Category? categoryFromDb = _db.Categories.Find(id);
+            if (categoryFromDb == null)
+            {
+                return NotFound(categoryFromDb);
+            }
+            return View(categoryFromDb);
+        }
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeletePost(int? id)
+        {
+            Category? obj = _db.Categories.Find(id);
+            if(obj == null)
+            {
+                return NotFound();
+            }
+            _db.Categories.Remove(obj);
+            _db.SaveChanges();
+            return  RedirectToAction("Index");
         }
     }
 }
